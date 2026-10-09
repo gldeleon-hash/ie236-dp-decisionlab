@@ -1,13 +1,60 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IE 236: Optimization in Industrial Engineering | The Decision Lab</title><style>
-:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#1b2930;background:#f5f8fa}*{box-sizing:border-box}body{margin:0}header{background:#123a37;color:white;padding:30px max(20px,calc((100vw - 1100px)/2))}h1{margin:4px 0;font-size:clamp(26px,4vw,39px)}h2{margin-top:0}.subtitle{opacity:.85}.wrap{max-width:1100px;margin:24px auto;padding:0 16px}.panel{background:white;border:1px solid #dbe6e5;border-radius:15px;padding:22px;margin:15px 0;box-shadow:0 2px 8px #0d29250a}.muted{color:#5a6c71}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#eef5f4;border-radius:10px;padding:13px}.stat b{display:block;font-size:23px;margin-top:4px}.pill{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;background:#d9efe6;color:#12583b;font-weight:700}.bad{background:#fde5df;color:#a52f25}.tabs{display:flex;gap:9px;flex-wrap:wrap}button{cursor:pointer;border:1px solid #bacdcc;background:white;color:#123a37;padding:10px 13px;border-radius:9px;font-weight:650}button:hover{background:#edf7f3}button.primary{background:#145b4e;border-color:#145b4e;color:white}button.primary:hover{background:#0a483d}button:disabled{opacity:.48;cursor:not-allowed}.tab.active{background:#145b4e;color:white}.hidden{display:none}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:740px}th,td{border-bottom:1px solid #e4eceb;padding:10px;text-align:center;font-variant-numeric:tabular-nums}th{background:#f1f6f5;font-size:13px}input[type=number]{width:68px;padding:8px;border:1px solid #a8bdb9;border-radius:7px;font:inherit;text-align:center}input.invalid{border:2px solid #c43d2e;background:#fff0ea}td.left{text-align:left}.flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.note{border-left:4px solid #2d826f;background:#eff8f4;padding:11px 14px;border-radius:6px}.danger{border-left-color:#c43d2e;background:#fff2ee}.answer{font-size:22px;font-weight:800;color:#145b4e}.badge{font-size:12px;border:1px solid #bed0cb;padding:3px 8px;border-radius:99px}canvas{max-width:100%}.choice{padding:7px;border:1px solid #e2eaea;margin:7px 0;border-radius:8px}details{margin:12px 0}footer{color:#65767a;margin:35px 0;font-size:12px}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.panel{padding:15px}}
-</style></head><body><header><div class="subtitle">IE 236: Optimization in Industrial Engineering</div><h1>The Decision Lab</h1><div class="subtitle">Factory Energy Challenge · 10-shift dynamic programming game</div></header><main class="wrap">
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#1b2930;background:#f5f8fa}*{box-sizing:border-box}body{margin:0}header{background:#123a37;color:white;padding:30px max(20px,calc((100vw - 1100px)/2))}h1{margin:4px 0;font-size:clamp(26px,4vw,39px)}h2{margin-top:0}.subtitle{opacity:.85}.wrap{max-width:1100px;margin:24px auto;padding:0 16px}.panel{background:white;border:1px solid #dbe6e5;border-radius:15px;padding:22px;margin:15px 0;box-shadow:0 2px 8px #0d29250a}.muted{color:#5a6c71}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#eef5f4;border-radius:10px;padding:13px}.stat b{display:block;font-size:23px;margin-top:4px}.pill{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;background:#d9efe6;color:#12583b;font-weight:700}.bad{background:#fde5df;color:#a52f25}.tabs{display:flex;gap:9px;flex-wrap:wrap}button{cursor:pointer;border:1px solid #bacdcc;background:white;color:#123a37;padding:10px 13px;border-radius:9px;font-weight:650}button:hover{background:#edf7f3}button.primary{background:#145b4e;border-color:#145b4e;color:white}button.primary:hover{background:#0a483d}button:disabled{opacity:.48;cursor:not-allowed}.tab.active{background:#145b4e;color:white}.hidden{display:none}.table-scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:740px}th,td{border-bottom:1px solid #e4eceb;padding:10px;text-align:center;font-variant-numeric:tabular-nums}th{background:#f1f6f5;font-size:13px}input[type=number]{width:68px;padding:8px;border:1px solid #a8bdb9;border-radius:7px;font:inherit;text-align:center}input.invalid{border:2px solid #c43d2e;background:#fff0ea}td.left{text-align:left}.flex{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.note{border-left:4px solid #2d826f;background:#eff8f4;padding:11px 14px;border-radius:6px}.danger{border-left-color:#c43d2e;background:#fff2ee}.answer{font-size:22px;font-weight:800;color:#145b4e}.badge{font-size:12px;border:1px solid #bed0cb;padding:3px 8px;border-radius:99px}canvas{max-width:100%}.choice{padding:7px;border:1px solid #e2eaea;margin:7px 0;border-radius:8px}
+.scenario-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}.scenario{border-radius:12px;padding:15px;background:#eef5f4;border:1px solid #d1e2dc}.scenario.surge{background:#fff5ea;border-color:#edddcb}.scenario strong{font-size:24px;display:block;margin:3px 0}.scenario small{color:#58706b}.scenario.surge small{color:#846349}
+.instruction{font-size:13px;background:#f0f5f9;border:1px solid #d9e5ec;border-radius:9px;padding:13px;color:#38516a;margin:13px 0}.two-column{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.step{border:1px solid #e2ebea;padding:17px;border-radius:12px;background:#fcfefe}.step h3{margin-top:0}.step.done{border-color:#65b19e}.field{display:flex;align-items:center;gap:9px;flex-wrap:wrap}select,input[type=range]{accent-color:#145b4e}select{border:1px solid #a8bdb9;background:white;color:#123a37;padding:10px;border-radius:8px;font:inherit;max-width:100%}
+.feedback-ok{color:#13634c;font-weight:750}.feedback-no{color:#af3e2b;font-weight:750}.feedback-pending{color:#596b70}.micro{font-size:12px}.branch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.branch>div{background:#f3f7f6;padding:11px;border-radius:9px}.summary-highlight{background:#e6f5ed;border-radius:10px;padding:14px;margin-top:13px}.solution-locked{color:#63747a;font-size:13px}.visual-bar{height:11px;border-radius:10px;background:#e4eeea;overflow:hidden}.visual-bar>span{display:block;height:100%;background:#227e68}.label-overline{font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:750;color:#477466}
+@media(max-width:700px){.scenario-grid,.two-column,.branch{grid-template-columns:1fr}}details{margin:12px 0}footer{color:#65767a;margin:35px 0;font-size:12px}@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.panel{padding:15px}}
+</style></head><body><header><div class="subtitle">IE 236: Optimization in Industrial Engineering</div><h1>The Decision Lab</h1><div class="subtitle">Factory Energy Challenge · 10-shift game + stochastic extension</div></header><main class="wrap">
 <section class="panel"><div class="flex"><span class="pill">ORIGINAL CLASSROOM CASE</span><span class="badge">Illustrative costs, not real tariffs</span></div><p>You manage an electric forklift in a warehouse. At the <b>start</b> of each shift, choose an integer amount of battery energy to purchase. The battery then supplies the shift's energy demand. Your mission is to complete all 10 shifts while minimizing total charging cost.</p><div class="stats"><div class="stat">Capacity<b>8 units</b></div><div class="stat">Initial battery<b>4 units</b></div><div class="stat">Operating horizon<b>10 shifts</b></div><div class="stat">Objective<b>Min cost</b></div></div><p class="muted">Rules: charging occurs before demand; no charging-rate limit beyond battery capacity; no borrowing energy or missed shifts; leftover energy at the end has zero salvage value. All battery and charging amounts are nonnegative integers.</p></section>
-<div class="tabs panel"><button id="tabPractice" class="tab active" onclick="showTab('practice')">1 · Manual-check mode</button><button id="tabPlay" class="tab" onclick="showTab('play')">2 · Play shift by shift</button><button id="tabSolver" class="tab" onclick="showTab('solver')">3 · DP solver</button></div>
+<div class="tabs panel"><button id="tabPractice" class="tab active" onclick="showTab('practice')">1 · Manual-check mode</button><button id="tabPlay" class="tab" onclick="showTab('play')">2 · Play shift by shift</button><button id="tabSolver" class="tab" onclick="showTab('solver')">3 · DP solver</button><button id="tabStochastic" class="tab" onclick="showTab('stochastic')">4 · Stochastic challenge</button></div>
 <section id="practice" class="panel"><h2>Manual-check mode</h2><p class="muted">Enter a charging amount for each shift. Changes propagate automatically to later battery levels. Red cells indicate a physically infeasible plan.</p><div class="table-scroll"><table><thead><tr><th>Shift</th><th>Price / unit</th><th>Demand</th><th>Start battery</th><th>Charge xₜ</th><th>After charging</th><th>End battery</th><th>Charging cost</th></tr></thead><tbody id="practiceRows"></tbody></table></div><div class="flex" style="margin-top:17px"><button onclick="resetPractice()">Reset decisions</button><button onclick="fillMinimum()">Try just-in-time charging</button><button class="primary" onclick="checkPractice()">Check my plan</button></div><div id="practiceSummary" class="note" style="margin-top:16px" aria-live="polite">Enter decisions and select “Check my plan.”</div></section>
 <section id="play" class="panel hidden"><h2>Play one shift at a time</h2><p class="muted">Make a decision, commit, and see its consequence. You cannot undo a committed shift unless you restart. The demand and price data are known in this deterministic version.</p><div id="playStatus"></div><div id="playInput" class="flex" style="margin:14px 0"><label>Units to charge <input id="playCharge" type="number" min="0" max="8" step="1" value="0"></label><button class="primary" onclick="commitPlay()">Commit shift</button><button onclick="resetPlay()">Restart</button></div><div class="table-scroll"><table><thead><tr><th>Shift</th><th>Price</th><th>Demand</th><th>Battery before</th><th>Charge</th><th>Battery after</th><th>Cumulative cost</th></tr></thead><tbody id="playRows"></tbody></table></div><div id="playMessage" class="note" style="margin-top:12px">Your mission begins at Shift 1.</div></section>
 <section id="solver" class="panel hidden"><h2>Dynamic Programming solver</h2><p>This section solves every feasible battery state for every shift by <b>backward recursion</b>. Use it after completing your manual work. This is a <em>self-reveal</em> control, not a secure instructor lock: students with the file can access its code.</p><button class="primary" id="revealBtn" onclick="revealSolution()">Reveal optimal DP solution</button><div id="solverResults" class="hidden"><p class="note">Value function: <b>Vₜ(s) = minₓ { pₜx + Vₜ₊₁(s + x − Dₜ) }</b>, over integer x satisfying 0 ≤ x ≤ 8 − s and s + x ≥ Dₜ. Boundary: V₁₁(s)=0.</p><div class="stats" style="grid-template-columns:repeat(2,1fr)"><div class="stat">Minimum total cost<b id="optCost"></b></div><div class="stat">End-of-shift battery<b id="optEnd"></b></div></div><h3>Optimal decisions from the initial state</h3><div class="table-scroll"><table><thead><tr><th>Shift</th><th>Start battery</th><th>Charge</th><th>Price</th><th>End battery</th><th>Shift cost</th></tr></thead><tbody id="optimalRows"></tbody></table></div><details><summary><b>Inspect Bellman value and policy table (all states)</b></summary><p class="muted">Each cell reports minimum remaining cost / optimal charge from the specified starting battery.</p><div class="table-scroll"><table><thead id="dpHead"></thead><tbody id="dpRows"></tbody></table></div></details><h3>Understand the recursion</h3><p>At the last shift, calculate what it costs to finish from each possible battery level. Then solve Shift 9 using the best costs already calculated for Shift 10. Repeat back to Shift 1. The solver records both the lowest remaining cost and the charging action producing it.</p></div></section>
-<section class="panel"><h2>Reflect and explain</h2><ol><li>Is purchasing only the energy needed immediately always the cheapest strategy? Explain.</li><li>What makes the battery level a sufficient <b>state</b> for this deterministic problem?</li><li>What do the <b>value function</b> and <b>optimal policy</b> each tell us?</li><li>How would the transition and Bellman equation change if next shift's demand were uncertain?</li></ol><p class="muted">Instructor note: This version has public, fixed parameters and is intended for deterministic practice and verification. A separate stochastic extension can add demand distributions and decisions that must be made before outcomes are revealed.</p></section>
-<footer>IE 236 learning exercise · Original 10-shift forklift charging case · Runs locally in any modern browser, with no login and no internet required after download. All values are illustrative.</footer></main><script>
+
+<section id="stochastic" class="panel hidden">
+  <div class="flex"><span class="pill">CLASSROOM CHALLENGE 3</span><span class="badge">Matches the IE 236 lesson slides 18–22</span></div>
+  <h2 style="margin-top:12px">What if tomorrow's workload is uncertain?</h2>
+  <p>In the 10-shift game, demand is known. Now explore a <b>separate, two-shift scenario based on Shifts 9 and 10</b>. You begin Shift 9 with <b>1 battery unit</b>—regardless of the battery level you reached in your earlier game. You must choose how much to charge <b>before</b> you learn the workload.</p>
+  <div class="stats"><div class="stat">Starting battery<b>1 unit</b></div><div class="stat">Battery capacity<b>8 units</b></div><div class="stat">Shift 9 price<b>4 / unit</b></div><div class="stat">Shift 10<b>Demand 3; price 6</b></div></div>
+  <div class="scenario-grid">
+    <div class="scenario"><span class="label-overline">Possible Shift 9 workload</span><strong>60% · Normal</strong>Energy demand: <b>2 units</b><br><small>Probability = 0.60</small></div>
+    <div class="scenario surge"><span class="label-overline">Possible Shift 9 workload</span><strong>40% · High</strong>Energy demand: <b>4 units</b><br><small>Probability = 0.40</small></div>
+  </div>
+  <div class="note"><b>No shortages allowed.</b> Select a whole-number Shift 9 charge that covers even the 4-unit demand. With a starting battery of 1 and capacity 8, feasible decisions are <b>3, 4, 5, 6, or 7 units</b>. At Shift 10, you may charge again after observing the remaining battery.</div>
+
+  <div style="margin-top:27px" class="label-overline">Part A · Manual computation checker</div>
+  <h3>Can you find the lowest <em>expected</em> total cost?</h3>
+  <p class="muted">Before revealing any answers, compute the expected cost for each Shift 9 charge on paper. The website will check your results. For a candidate charge, calculate: <b>Shift 9 cost + 0.60 × best Shift 10 cost after normal demand + 0.40 × best Shift 10 cost after high demand.</b></p>
+  <div class="table-scroll"><table style="min-width:560px"><thead><tr><th>Charge in Shift 9</th><th>Shift 9 cost</th><th>Your expected total cost</th><th>Verification</th></tr></thead><tbody id="stochCheckRows"></tbody></table></div>
+  <div class="flex" style="margin-top:14px"><label for="stochBest">Your preferred Shift 9 action:</label><select id="stochBest" aria-label="Predicted optimal charging decision"><option value="">Select</option><option value="3">Charge 3</option><option value="4">Charge 4</option><option value="5">Charge 5</option><option value="6">Charge 6</option><option value="7">Charge 7</option></select><button class="primary" onclick="checkStochasticWorksheet()">Check my calculations</button><button onclick="clearStochasticWorksheet()">Clear answers</button></div>
+  <div id="stochWorksheetFeedback" class="note" style="margin-top:14px" aria-live="polite">Your calculations are hidden until you select <b>Check my calculations</b>.</div>
+  <div class="flex" style="margin-top:13px"><button id="stochRevealButton" onclick="revealStochasticSolution()">Reveal worked stochastic solution</button><span class="solution-locked">Instructor tip: leave the reveal until after team calculations.</span></div>
+  <div id="stochSolution" class="hidden" style="margin-top:15px">
+    <div class="summary-highlight"><b>Optimal action:</b> <span id="stochOptAction"></span><br><b>Minimum expected cost:</b> <span id="stochOptCost"></span> cost units</div>
+    <p>Shift 10 is deterministic: <b>V₁₀(s) = 6 × max(0, 3 − s)</b>. At Shift 9, let <b>x</b> be the charge chosen before demand is known:</p>
+    <div class="instruction"><b>V₉(1) = minₓ { 4x + 0.60 V₁₀(1 + x − 2) + 0.40 V₁₀(1 + x − 4) }</b>, for x = 3, 4, 5, 6, 7.</div>
+    <div class="table-scroll"><table style="min-width:780px"><thead><tr><th>x₉</th><th>Cost now</th><th>Next battery (normal)</th><th>V₁₀(normal)</th><th>Next battery (high)</th><th>V₁₀(high)</th><th>Expected total</th></tr></thead><tbody id="stochSolutionRows"></tbody></table></div>
+    <p class="muted">Expected cost is a weighted average—not the cost of one particular play. The decision in Shift 10 depends on the battery remaining after demand is observed.</p>
+    <details><summary><b>Optional: Does the best action change when probabilities change?</b></summary>
+      <p class="muted">Keep the possible demands fixed. Vary the probability of normal demand; high demand has the remaining probability. This is an additional sensitivity analysis, not part of the original slides.</p>
+      <div class="field"><label for="probNormal">Probability of normal demand</label><input type="range" id="probNormal" min="0" max="100" value="60" step="5" oninput="updateStochSensitivity()"><b id="probNormalLabel">60%</b></div>
+      <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:10px"><div class="stat">Best charge<b id="sensitivityCharge"></b></div><div class="stat">Best expected cost<b id="sensitivityCost"></b></div></div>
+      <p id="sensitivityExplain" class="muted"></p>
+    </details>
+  </div>
+
+  <div class="label-overline" style="margin-top:30px">Part B · Play the uncertain scenario</div>
+  <h3>Commit now. Discover the demand afterward.</h3>
+  <p class="muted">Choose Shift 9 charging without knowing whether workload will be normal or high. The website randomly reveals demand according to the 60%/40% probabilities. Then make your Shift 10 decision and see your realized cost.</p>
+  <div id="stochPlayArea" class="step" aria-live="polite"></div>
+  <div class="flex" style="margin-top:12px"><button onclick="restartStochPlay()">Start another play</button><button onclick="simulateStochHundred()">Simulate 100 runs of my chosen policy</button></div>
+  <div id="stochBatchResult" class="hidden note" style="margin-top:12px" aria-live="polite"></div>
+  <div id="stochGameHistory" class="muted micro" style="margin-top:12px"></div>
+  <div class="instruction" style="margin-top:18px"><b>Discuss with your team:</b> Why can two groups choose exactly the same Shift 9 charge but end up with different realized costs? Why must the optimal Shift 10 decision be conditional on observed battery?</div>
+</section>
+
+<section class="panel"><h2>Reflect and explain</h2><ol><li>Is purchasing only the energy needed immediately always the cheapest strategy? Explain.</li><li>What makes the battery level a sufficient <b>state</b> for this deterministic problem?</li><li>What do the <b>value function</b> and <b>optimal policy</b> each tell us?</li><li>How does expected future cost enter the Bellman equation when Shift 9 demand is uncertain?</li></ol><p class="muted">Instructor note: Use the stochastic challenge tab after students have attempted the deterministic game. Both solution tabs are self-reveal, not secure instructor locks.</p></section>
+<footer>IE 236 learning exercise · Original 10-shift forklift charging case with a 2-shift stochastic extension · Runs locally in any modern browser, with no login and no internet required after download. All values are illustrative.</footer></main><script>
 'use strict';const D=[2,3,2,4,3,2,4,3,2,3],P=[5,8,3,9,4,7,2,8,4,6],C=8,N=10,INITIAL=4;let charges=Array(N).fill(0),play=[],revealed=false;
 function money(v){return Number.isFinite(v)?String(v):'∞'}
 function simulate(acts){let s=INITIAL,total=0,rows=[],feasible=true;for(let i=0;i<N;i++){const x=Number(acts[i]);const valid=Number.isInteger(x)&&x>=0&&s+x<=C&&s+x>=D[i];const next=s+x-D[i];total+=x*P[i];rows.push({s,x,after:s+x,next,cost:x*P[i],valid});if(!valid)feasible=false;s=next}return {rows,total,feasible}}
@@ -16,11 +63,121 @@ function editCharge(i,raw){charges[i]=Number(raw);renderPractice();document.getE
 function resetPractice(){charges=Array(N).fill(0);renderPractice();document.getElementById('practiceSummary').textContent='Plan reset.'}
 function fillMinimum(){let s=INITIAL;charges=D.map(d=>{const x=Math.max(0,d-s);s=s+x-d;return x});renderPractice();checkPractice()}
 function checkPractice(){const sim=renderPractice(),el=document.getElementById('practiceSummary');el.className='note'+(sim.feasible?'':' danger');const first=sim.rows.findIndex(r=>!r.valid);el.textContent=sim.feasible?`Feasible plan. Total charging cost: ${sim.total} cost units. Final battery: ${sim.rows[N-1].next}. Compare with the DP solution when ready.`:`Infeasible at Shift ${first+1}. Check capacity (8 units), integer charge, and energy available for demand. The displayed total cost is NOT a valid solution.`}
-function showTab(s){for(const t of ['practice','play','solver']){document.getElementById(t).classList.toggle('hidden',s!==t);document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active',s===t)}}
+function showTab(s){for(const t of ['practice','play','solver','stochastic']){document.getElementById(t).classList.toggle('hidden',s!==t);document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active',s===t)}}
 function renderPlay(){let s=INITIAL,cost=0;for(const r of play){s=r.next;cost+=r.cost}const t=play.length;document.getElementById('playStatus').innerHTML=t===N?`<div class="pill">Mission completed</div><p class="answer">Total cost: ${cost}</p>`:`<div class="stats"><div class="stat">Current shift<b>${t+1} / ${N}</b></div><div class="stat">Battery<b>${s} / 8</b></div><div class="stat">Demand this shift<b>${D[t]}</b></div><div class="stat">Price per unit<b>${P[t]}</b></div></div>`;document.getElementById('playInput').querySelector('.primary').disabled=t===N;document.getElementById('playCharge').disabled=t===N;document.getElementById('playRows').innerHTML=play.map((r,i)=>`<tr><td>${i+1}</td><td>${P[i]}</td><td>${D[i]}</td><td>${r.s}</td><td>${r.x}</td><td>${r.next}</td><td>${play.slice(0,i+1).reduce((a,z)=>a+z.cost,0)}</td></tr>`).join('')}
 function commitPlay(){const t=play.length;if(t===N)return;const s=t?play[t-1].next:INITIAL;const x=Number(document.getElementById('playCharge').value);const msg=document.getElementById('playMessage');if(!Number.isInteger(x)||x<0||s+x>C||s+x<D[t]){msg.className='note danger';msg.textContent=`Not feasible: choose an integer charging amount between ${Math.max(0,D[t]-s)} and ${C-s}.`;return}play.push({s,x,next:s+x-D[t],cost:x*P[t]});msg.className='note';msg.textContent=`Shift ${t+1} committed. You purchased ${x} unit(s), ended with ${s+x-D[t]} unit(s), and spent ${x*P[t]}.`;document.getElementById('playCharge').value=0;renderPlay()}
 function resetPlay(){play=[];document.getElementById('playCharge').value=0;document.getElementById('playMessage').textContent='Game restarted at Shift 1.';renderPlay()}
 function solve(){const V=Array.from({length:N+2},()=>Array(C+1).fill(Infinity)),A=Array.from({length:N+2},()=>Array(C+1).fill(null));for(let s=0;s<=C;s++)V[N+1][s]=0;for(let t=N;t>=1;t--)for(let s=0;s<=C;s++)for(let x=Math.max(0,D[t-1]-s);x<=C-s;x++){const val=P[t-1]*x+V[t+1][s+x-D[t-1]];if(val<V[t][s]){V[t][s]=val;A[t][s]=x}}let s=INITIAL,rows=[];for(let t=1;t<=N;t++){const x=A[t][s];rows.push({t,s,x,price:P[t-1],next:s+x-D[t-1],cost:x*P[t-1]});s=s+x-D[t-1]}return{V,A,rows,total:V[1][INITIAL],end:s}}
 function revealSolution(){if(revealed)return;revealed=true;const o=solve();document.getElementById('solverResults').classList.remove('hidden');document.getElementById('optCost').textContent=money(o.total)+' units';document.getElementById('optEnd').textContent=o.end+' units';document.getElementById('optimalRows').innerHTML=o.rows.map(r=>`<tr><td>${r.t}</td><td>${r.s}</td><td>${r.x}</td><td>${r.price}</td><td>${r.next}</td><td>${r.cost}</td></tr>`).join('');document.getElementById('dpHead').innerHTML='<tr><th>Shift</th>'+Array.from({length:C+1},(_,s)=>`<th>Battery ${s}</th>`).join('')+'</tr>';document.getElementById('dpRows').innerHTML=Array.from({length:N},(_,i)=>`<tr><td>${i+1}</td>${o.V[i+1].map((v,s)=>`<td>${money(v)} / ${o.A[i+1][s]===null?'—':o.A[i+1][s]}</td>`).join('')}</tr>`).join('');document.getElementById('revealBtn').disabled=true;document.getElementById('revealBtn').textContent='Solution revealed'}
-renderPractice();renderPlay();
+
+// Stochastic classroom challenge. Matches Slides 18–22 of the IE 236 facilitator deck.
+// It is a separate scenario: begin Shift 9 at s=1, normal demand 2 (p=.6),
+// high demand 4 (p=.4), then known Shift 10 demand 3 at price 6.
+const STOCH_START=1, STOCH_P9=4, STOCH_D10=3, STOCH_P10=6, STOCH_P_NORMAL=.60;
+const STOCH_ACTIONS=[3,4,5,6,7];
+let stochAnswers={},stochState=null,stochHistory=[],stochLastCharge=4;
+function fmt1(v){return Number(v).toFixed(1)}
+function endCost(s){return STOCH_P10*Math.max(0,STOCH_D10-s)}
+function stochOutcome(x,normalProb=STOCH_P_NORMAL){
+  const low=STOCH_START+x-2,high=STOCH_START+x-4;
+  const futureLow=endCost(low),futureHigh=endCost(high);
+  return{x,now:STOCH_P9*x,low,high,futureLow,futureHigh,expected:STOCH_P9*x+normalProb*futureLow+(1-normalProb)*futureHigh};
+}
+function stochasticOpt(p=STOCH_P_NORMAL){
+  const choices=STOCH_ACTIONS.map(x=>stochOutcome(x,p));
+  const min=Math.min(...choices.map(c=>c.expected));
+  const best=choices.filter(c=>Math.abs(c.expected-min)<1e-9).map(c=>c.x);
+  return{choices,min,best};
+}
+function renderStochCheck(){
+  document.getElementById('stochCheckRows').innerHTML=STOCH_ACTIONS.map(x=>
+    `<tr><td>${x}</td><td>${STOCH_P9*x}</td><td><input type="number" step="0.1" style="width:108px" aria-label="My expected total cost for charging ${x}" id="stochAnswer${x}" placeholder="e.g. 20.8" value="${stochAnswers[x]??''}" oninput="stochAnswers[${x}]=this.value" /></td><td id="stochFeedback${x}" class="feedback-pending">Not checked</td></tr>`
+  ).join('');
+}
+function checkStochasticWorksheet(){
+  const correct=stochasticOpt(), eps=.05000001;
+  let entered=0,right=0;
+  STOCH_ACTIONS.forEach(x=>{
+    const raw=document.getElementById(`stochAnswer${x}`).value.trim(), el=document.getElementById(`stochFeedback${x}`);
+    if(raw===''){el.className='feedback-pending';el.textContent='Enter a value';return}
+    entered++;
+    const n=Number(raw),answer=stochOutcome(x).expected;
+    if(Number.isFinite(n)&&Math.abs(n-answer)<eps){el.className='feedback-ok';el.textContent='✓ Correct';right++}
+    else{el.className='feedback-no';el.textContent='✗ Recheck calculation'}
+  });
+  const sel=document.getElementById('stochBest').value;
+  const bestOK=sel!==''&&correct.best.includes(Number(sel));
+  const el=document.getElementById('stochWorksheetFeedback');
+  el.className='note'+(right===STOCH_ACTIONS.length&&bestOK?'':' danger');
+  el.innerHTML=`<b>${right} of ${STOCH_ACTIONS.length} expected-cost computations correct.</b> ${sel===''?'Choose the action you believe is optimal.':bestOK?'Your recommended action is optimal.':'Your recommended action is not optimal; compare the five expected costs.'} ${entered<STOCH_ACTIONS.length?'Fill all rows to check the complete table.':''} You may revise and check again.`;
+}
+function clearStochasticWorksheet(){stochAnswers={};document.getElementById('stochBest').value='';renderStochCheck();const el=document.getElementById('stochWorksheetFeedback');el.className='note';el.textContent='Answers cleared. Compute on paper and then check your work.'}
+function revealStochasticSolution(){
+  const sol=stochasticOpt();
+  document.getElementById('stochSolution').classList.remove('hidden');
+  document.getElementById('stochOptAction').textContent=sol.best.map(x=>`charge ${x}`).join(' or ');
+  document.getElementById('stochOptCost').textContent=fmt1(sol.min);
+  document.getElementById('stochSolutionRows').innerHTML=sol.choices.map(o=>`<tr${sol.best.includes(o.x)?' style="background:#e8f5ed;font-weight:700"':''}><td>${o.x}</td><td>${o.now}</td><td>${o.low}</td><td>${o.futureLow}</td><td>${o.high}</td><td>${o.futureHigh}</td><td>${fmt1(o.expected)}</td></tr>`).join('');
+  document.getElementById('stochRevealButton').disabled=true;
+  document.getElementById('stochRevealButton').textContent='Worked solution revealed';
+  updateStochSensitivity();
+}
+function updateStochSensitivity(){
+  const p=Number(document.getElementById('probNormal').value)/100;
+  const sol=stochasticOpt(p);
+  document.getElementById('probNormalLabel').textContent=Math.round(p*100)+'%';
+  document.getElementById('sensitivityCharge').textContent=sol.best.join(' or ');
+  document.getElementById('sensitivityCost').textContent=fmt1(sol.min)+' units';
+  document.getElementById('sensitivityExplain').textContent=`At P(normal)=${Math.round(p*100)}% and P(high)=${Math.round((1-p)*100)}%, the minimum expected two-shift cost is ${fmt1(sol.min)}. A changed probability can change the best current decision.`;
+}
+function renderStochPlay(){
+  const el=document.getElementById('stochPlayArea');
+  if(stochState===null){
+    el.innerHTML=`<h3>Step 1 · Charge before demand is revealed</h3><div class="field"><label for="stochCharge9">Shift 9 charging decision</label><select id="stochCharge9"><option value="3">3 units</option><option value="4" ${stochLastCharge===4?'selected':''}>4 units</option><option value="5" ${stochLastCharge===5?'selected':''}>5 units</option><option value="6" ${stochLastCharge===6?'selected':''}>6 units</option><option value="7" ${stochLastCharge===7?'selected':''}>7 units</option></select><button class="primary" onclick="stochCommit9()">Commit & reveal demand</button></div><p class="muted micro">Both demand scenarios must remain feasible. The outcome is sampled only after your decision is committed.</p>`;
+  }else if(stochState.phase==='shift10'){
+    const r=stochState, min=Math.max(0,STOCH_D10-r.battery),max=C-r.battery;
+    el.innerHTML=`<h3>Step 2 · Workload revealed</h3><div class="branch"><div><span class="label-overline">Observed Shift 9 demand</span><p style="margin:6px 0"><b>${r.demand} units</b> · ${r.demand===2?'Normal':'High workload'}</p><span class="muted micro">${r.demand===2?'60%':'40%'} probability</span></div><div><span class="label-overline">Battery entering Shift 10</span><p style="margin:6px 0"><b>${r.battery} units</b></p><span class="muted micro">Shift 9 cost ${r.now} units</span></div></div><p>Shift 10 needs <b>3 energy units</b> at <b>6 per unit</b>. You can choose a Shift 10 charge from ${min} to ${max}.</p><div class="field"><label for="stochCharge10">Shift 10 charge</label><input id="stochCharge10" type="number" min="${min}" max="${max}" step="1" value="${min}"><button class="primary" onclick="stochCommit10()">Finish the run</button></div><div id="stochRunMessage" class="muted micro" role="status"></div>`;
+  }else{
+    const r=stochState;
+    el.innerHTML=`<h3>Run completed</h3><div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="stat">Realized total cost<b>${r.realized}</b></div><div class="stat">End battery<b>${r.end}</b></div></div><p>You charged <b>${r.x9}</b> units before learning demand. The outcome was <b>${r.demand===2?'normal demand (2)':'high demand (4)'}</b>. You then charged <b>${r.x10}</b> units in Shift 10.</p><div class="note ${r.x10>endMinCharge(r.battery)?'danger':''}">${r.x10===endMinCharge(r.battery)?'Your Shift 10 action minimized the remaining charging cost.':'You bought more energy than necessary at Shift 10. The extra energy has no salvage value, so this run costs more than the optimal continuation.'} The theoretical expected cost of your Shift 9 choice <b>with optimal Shift 10 responses</b> is <b>${fmt1(stochOutcome(r.x9).expected)}</b>; any one realized cost can be different.</div>`;
+  }
+  const history=document.getElementById('stochGameHistory');
+  history.textContent=stochHistory.length?`${stochHistory.length} completed run(s) this session. Average realized cost across your plays: ${fmt1(stochHistory.reduce((a,r)=>a+r.realized,0)/stochHistory.length)}. (Different decisions and chance outcomes may be mixed.)`:'';
+}
+function endMinCharge(battery){return Math.max(0,STOCH_D10-battery)}
+function stochCommit9(){
+  if(stochState!==null)return;
+  const x9=Number(document.getElementById('stochCharge9').value);
+  if(!STOCH_ACTIONS.includes(x9))return;
+  stochLastCharge=x9;
+  const demand=Math.random()<STOCH_P_NORMAL?2:4;
+  stochState={phase:'shift10',x9,demand,battery:STOCH_START+x9-demand,now:STOCH_P9*x9};
+  renderStochPlay();
+}
+function stochCommit10(){
+  if(!stochState||stochState.phase!=='shift10')return;
+  const r=stochState,x10=Number(document.getElementById('stochCharge10').value),min=endMinCharge(r.battery),max=C-r.battery;
+  if(!Number.isInteger(x10)||x10<min||x10>max){
+    document.getElementById('stochRunMessage').textContent=`Choose a whole-number charge between ${min} and ${max}; Shift 10 must be completed.`;return;
+  }
+  r.x10=x10;r.realized=r.now+STOCH_P10*x10;r.end=r.battery+x10-STOCH_D10;r.phase='done';
+  stochHistory.push({x9:r.x9,demand:r.demand,realized:r.realized});
+  renderStochPlay();
+}
+function restartStochPlay(){stochState=null;document.getElementById('stochBatchResult').classList.add('hidden');renderStochPlay()}
+function simulateStochHundred(){
+  const x=stochState?stochState.x9:stochLastCharge;
+  const trials=100;let normal=0,cost=0;
+  for(let i=0;i<trials;i++){
+    const d=Math.random()<STOCH_P_NORMAL?2:4;if(d===2)normal++;
+    const b=STOCH_START+x-d;
+    cost+=STOCH_P9*x+STOCH_P10*endMinCharge(b);
+  }
+  const actual=cost/trials,analytic=stochOutcome(x).expected;
+  const el=document.getElementById('stochBatchResult');
+  el.className='note';
+  el.innerHTML=`Simulated <b>100 runs</b> for a policy that charges <b>${x}</b> in Shift 9 and then optimally adapts at Shift 10. Normal workloads: <b>${normal}</b>; high workloads: <b>${trials-normal}</b>. Average simulated cost: <b>${fmt1(actual)}</b>. Exact expected cost: <b>${fmt1(analytic)}</b>. The sample average may differ because demand is random.`;
+}
+
+renderPractice();renderPlay();renderStochCheck();renderStochPlay();
 </script></body></html>
